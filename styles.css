@@ -1,0 +1,553 @@
+/* sources & references:
+modal logic: https://www.w3schools.com/howto/howto_css_modals.asp
+windows aesthetic styling: https://codefronts.com/design-styles/css-retro-designs/retro-windows-95-ui-css-template/
+*/
+
+/* VARIABLES */
+:root {
+  --font-body: "Consolas", monospace;
+  --font-ui: "Segoe UI", "Selawik", "Open Sans", sans-serif;
+  --font-window:
+    system-ui, -apple-system, "Segoe UI", Tahoma, Verdana, Arial, sans-serif;
+
+  /* general colors */
+  --black: #000000;
+  --white: #ffffff;
+  --text: #101010;
+  --red: #c80000;
+  --green: #008e1a;
+  --blue: #4867af;
+
+  /* win95 colors */
+  --win-face: #c0c0c0;
+  --win-hi: #ffffff;
+  --win-light: #dfdfdf;
+  --win-shadow: #808080;
+  --win-dark: #000000;
+  --win-blue: #000080;
+  --win-blue-light: #1084d0;
+
+  /* media player colors */
+  --chrome-light: #f4f4f2;
+  --chrome-mid: #d6d6d2;
+  --bevel-hi: #ffffff;
+  --bevel-lo: #6b6b68;
+  --screen-bg: #eceae4;
+  --red-bright: #c8102e;
+  --red-dark: #7c0a1d;
+}
+
+/* BASE STYLES */
+
+body {
+  margin: 20px;
+  padding: 50px;
+  color: var(--black);
+  font-family: var(--font-body);
+  font-size: 15px;
+  background: #cccccc url("assets/bg.jpg") no-repeat center/cover fixed;
+}
+
+h2 {
+  font-family: var(--font-ui);
+}
+
+p {
+  display: inline;
+}
+
+/* TOOLTIPS */
+.tooltip {
+  position: relative;
+  display: inline;
+  border-bottom: 1.5px dashed var(--green);
+}
+
+.tooltip .tooltip-text {
+  position: fixed;
+  width: 220px;
+  max-width: calc(100vw - 16px);
+  padding: 10px 12px;
+
+  background-color: var(--blue);
+  color: var(--white);
+
+  text-align: left;
+  font-size: 13px;
+
+  border: 2px dotted var(--green);
+  border-radius: 10px;
+
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transition: opacity 0.15s ease-in-out;
+}
+
+.tooltip:hover .tooltip-text,
+.tooltip-text.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.tooltip .tooltip-text::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  border-width: 5px;
+  border-style: solid;
+  transform: translateX(-50%);
+}
+
+.tooltip-text.arrow-down::after {
+  top: 100%;
+  border-color: var(--green) transparent transparent transparent;
+}
+
+.tooltip-text.arrow-up::after {
+  bottom: 100%;
+  border-color: transparent transparent var(--green) transparent;
+}
+
+/* INSERTED TEXT / INDENTATION */
+.indent {
+  display: inline-block;
+  margin-left: 40px;
+}
+
+.insert-btn {
+  display: inline-block;
+  background: none;
+  border: none;
+  color: var(--red);
+  cursor: pointer;
+  font-size: 1em;
+  vertical-align: bottom;
+  transition: transform 0.2s;
+}
+
+.insert-btn:hover {
+  transform: scale(1.3);
+}
+
+.inserted-text {
+  color: var(--red);
+}
+
+/* PROGRAM LAUNCHER BUTTONS */
+.win95-launcher {
+  margin-left: 40%;
+  margin-right: 60%;
+  margin-bottom: 1%;
+
+  max-width: 100px;
+  max-height: 100px;
+  padding: 2%;
+
+  border-radius: 1em;
+
+  align-items: center;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.one {
+  background-image: url("assets/notepad.webp");
+}
+
+.two {
+  background-image: url("assets/mediaplayer.webp");
+}
+
+/* WIN95 WINDOW */
+.win95-window {
+  /* win95 bevels */
+  --b: 2px;
+  background: var(--win-face);
+  color: var(--text);
+  font-family: var(--font-window);
+  padding: 3px;
+  box-shadow:
+    inset var(--b) var(--b) 0 0 var(--win-hi),
+    inset calc(var(--b) * -1) calc(var(--b) * -1) 0 0 var(--win-dark),
+    inset calc(var(--b) * 2) calc(var(--b) * 2) 0 0 var(--win-light),
+    inset calc(var(--b) * -2) calc(var(--b) * -2) 0 0 var(--win-shadow);
+}
+
+/* WINDOW PANELS */
+.panel {
+  display: none;
+  position: fixed;
+  top: 6vh;
+  z-index: 5;
+  max-height: 85vh;
+}
+
+.panel.open {
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-left {
+  left: 2vw;
+  width: fit-content;
+  max-width: 50vw;
+}
+
+.panel-right {
+  right: 2vw;
+  width: fit-content;
+  max-width: 50vw;
+}
+
+/* WINDOW TITLE BAR */
+.win95-cap {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  margin: 3px;
+  padding: 0.25rem 0.25rem 0.25rem 0.5rem;
+}
+
+.win95-cap.one {
+  background: linear-gradient(90deg, var(--win-blue), var(--win-blue-light));
+}
+
+.win95-cap.two {
+  background: linear-gradient(180deg, var(--red-bright), var(--red-dark));
+}
+
+.win95-cap-ic {
+  inline-size: 16px;
+  block-size: 16px;
+  flex: none;
+
+  background: #f4f4ee;
+
+  clip-path: polygon(0 0, 70% 0, 100% 26%, 100% 100%, 0 100%);
+}
+
+.win95-cap-t {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+
+  color: var(--white);
+  font-size: 0.85rem;
+  font-weight: 700;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.win95-cap-b {
+  display: flex;
+  gap: 2px;
+  flex: none;
+}
+
+/* WINDOW CONTROL BUTTONS & ICONS */
+.win95-sys {
+  display: grid;
+  place-items: center;
+
+  inline-size: 22px;
+  block-size: 20px;
+  padding: 0;
+
+  background: var(--win-face);
+  border: 0;
+  cursor: pointer;
+
+  box-shadow:
+    inset var(--b) var(--b) 0 0 var(--win-hi),
+    inset calc(var(--b) * -1) calc(var(--b) * -1) 0 0 var(--win-dark),
+    inset calc(var(--b) * 2) calc(var(--b) * 2) 0 0 var(--win-light),
+    inset calc(var(--b) * -2) calc(var(--b) * -2) 0 0 var(--win-shadow);
+}
+
+.win95-sys:active {
+  box-shadow:
+    inset var(--b) var(--b) 0 0 var(--win-dark),
+    inset calc(var(--b) * -1) calc(var(--b) * -1) 0 0 var(--win-hi),
+    inset calc(var(--b) * 2) calc(var(--b) * 2) 0 0 var(--win-shadow),
+    inset calc(var(--b) * -2) calc(var(--b) * -2) 0 0 var(--win-light);
+}
+
+.win95-sg {
+  display: block;
+  background: var(--text);
+}
+
+.win95-sg--min {
+  inline-size: 8px;
+  block-size: 2px;
+  margin-block-start: 7px;
+}
+
+.win95-sg--max {
+  inline-size: 9px;
+  block-size: 8px;
+
+  background: transparent;
+  border: 1.5px solid var(--text);
+  border-block-start-width: 2.5px;
+}
+
+.win95-sg--cls {
+  inline-size: 10px;
+  block-size: 10px;
+
+  background: transparent;
+  background-image:
+    linear-gradient(
+      45deg,
+      transparent 44%,
+      var(--text) 44% 56%,
+      transparent 56%
+    ),
+    linear-gradient(
+      -45deg,
+      transparent 44%,
+      var(--text) 44% 56%,
+      transparent 56%
+    );
+}
+
+/* WINDOW MENU BAR */
+.win95-mb {
+  margin: 0 3px;
+}
+
+.win95-mb ul {
+  display: flex;
+  flex-wrap: wrap;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.win95-mb button {
+  padding: 0.35rem 0.6rem;
+
+  background: transparent;
+  border: 0;
+
+  color: var(--text);
+  font: inherit;
+  font-size: 0.82rem;
+
+  cursor: pointer;
+}
+
+.win95-mb button:hover {
+  background: var(--win-blue);
+  color: var(--white);
+}
+
+/* WINDOW CONTENT */
+.win95-client {
+  margin: 3px;
+  padding: 1rem 1.1rem;
+
+  background: var(--white);
+
+  overflow-y: auto;
+
+  font-family: var(--font-body);
+
+  box-shadow:
+    inset var(--b) var(--b) 0 0 var(--win-shadow),
+    inset calc(var(--b) * -1) calc(var(--b) * -1) 0 0 var(--win-hi),
+    inset calc(var(--b) * 2) calc(var(--b) * 2) 0 0 var(--win-dark),
+    inset calc(var(--b) * -2) calc(var(--b) * -2) 0 0 var(--win-light);
+}
+
+/* CLOSE BUTTON OVERRIDE */
+.win95-window .close {
+  float: none;
+  color: inherit;
+  font-size: inherit;
+  font-weight: normal;
+}
+
+/* MEDIA PLAYER */
+
+.player-stage * {
+  box-sizing: border-box;
+}
+
+.player {
+  width: 500px;
+
+  background: linear-gradient(180deg, var(--chrome-light), var(--chrome-mid));
+
+  border-radius: 4px;
+
+  box-shadow:
+    0 0 0 1px #7a7a76,
+    0 0 0 3px var(--chrome-light),
+    0 0 0 4px #7a7a76,
+    0 18px 40px rgba(0, 0, 0, 0.5);
+
+  overflow: hidden;
+}
+
+.player .titlebar {
+  padding: 8px 14px;
+
+  background: linear-gradient(180deg, var(--red-bright), var(--red-dark));
+
+  color: var(--white);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 1px;
+
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.4);
+}
+.player .body {
+  padding: 16px;
+}
+
+.player .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  background: var(--win-face);
+  border: 0;
+  border-radius: 0;
+
+  font: inherit;
+
+  cursor: pointer;
+
+  box-shadow:
+    inset var(--b, 2px) var(--b, 2px) 0 0 var(--win-hi),
+    inset calc(var(--b, 2px) * -1) calc(var(--b, 2px) * -1) 0 0 var(--win-dark),
+    inset calc(var(--b, 2px) * 2) calc(var(--b, 2px) * 2) 0 0 var(--win-light),
+    inset calc(var(--b, 2px) * -2) calc(var(--b, 2px) * -2) 0 0
+      var(--win-shadow);
+}
+
+.player .btn.active,
+.player .btn:active {
+  box-shadow:
+    inset var(--b, 2px) var(--b, 2px) 0 0 var(--win-dark),
+    inset calc(var(--b, 2px) * -1) calc(var(--b, 2px) * -1) 0 0 var(--win-hi),
+    inset calc(var(--b, 2px) * 2) calc(var(--b, 2px) * 2) 0 0 var(--win-shadow),
+    inset calc(var(--b, 2px) * -2) calc(var(--b, 2px) * -2) 0 0 var(--win-light);
+}
+
+.player .btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.player .btn.heart.liked svg path {
+  fill: var(--red-bright);
+}
+
+/* ALBUMS */
+
+.player .art-frame {
+  width: 400px;
+  height: 400px;
+
+  flex-shrink: 0;
+
+  margin: 0 auto;
+  padding: 6px;
+
+  background: var(--chrome-mid);
+  border-radius: 3px;
+
+  box-shadow:
+    inset 2px 2px 3px var(--bevel-lo),
+    inset -1px -1px 0 var(--bevel-hi);
+}
+
+.player .art-frame img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  border-radius: 2px;
+
+  box-shadow:
+    inset 0 0 0 1px #8c8c88,
+    inset 2px 2px 4px rgba(0, 0, 0, 0.35);
+}
+
+/* PLAYER TRANSPORT CONTROLS */
+
+.player .transport {
+  display: flex;
+  gap: 5px;
+  margin-top: 14px;
+}
+
+.player .transport + .transport {
+  margin-top: 5px;
+}
+
+.player .transport .btn {
+  flex: 1;
+  height: 34px;
+}
+
+.player .transport .wide {
+  flex: 1.6;
+}
+
+/* PLAYER METADATA */
+
+.player .meta {
+  display: flex;
+  gap: 8px;
+
+  margin-top: 12px;
+
+  color: #444;
+  font-size: 13px;
+}
+
+.player .meta .value {
+  flex: 1;
+
+  padding: 6px 8px;
+
+  background: var(--screen-bg);
+  border-radius: 2px;
+
+  font-size: 18px;
+  color: #111;
+
+  box-shadow:
+    inset 1px 1px 2px rgba(0, 0, 0, 0.4),
+    inset -1px -1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.player.label {
+  font-family: var(--font-ui);
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 800px) {
+  .panel {
+    position: static;
+    width: 92%;
+    margin: 1rem auto;
+  }
+}
