@@ -1,0 +1,463 @@
+body {
+  margin: 20px;
+  padding: 50px;
+  background-color: #ececec;
+  color: rgb(0, 0, 0);
+  font-family: "consolas", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 15px;
+}
+
+h2 {
+  font-family: "Segoe UI", "Selawik", "Open Sans", sans-serif;
+}
+
+p {
+  display: inline;
+}
+
+/* the hoverable word */
+.tooltip {
+  position: relative;
+  display: inline;
+  border-bottom: 1.5px dashed #008e1a;
+}
+
+/* fixed positioning (not absolute) means no ancestor's overflow can clip
+   this, no matter how deep it's nested — JS sets top/left with real
+   screen coordinates on hover and keeps it inside the viewport */
+.tooltip .tooltip-text {
+  position: fixed;
+  width: 220px;
+  max-width: calc(100vw - 16px);
+  background-color: #4867af;
+  color: #ffffff;
+  text-align: left;
+  border-radius: 10px;
+  border-width: 2px;
+  border-style: dotted;
+  border-color: #008e1a;
+  padding: 10px 12px;
+  font-size: 13px;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease-in-out;
+  pointer-events: none;
+}
+
+.tooltip-text.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.tooltip-text::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+}
+
+/* tooltip sits above the word — arrow points down toward it */
+.tooltip-text.arrow-down::after {
+  top: 100%;
+  border-color: #008e1a transparent transparent transparent;
+}
+
+/* tooltip got flipped below the word (not enough room above) — arrow points up */
+.tooltip-text.arrow-up::after {
+  bottom: 100%;
+  border-color: transparent transparent #008e1a transparent;
+}
+
+.indent {
+  display: inline-block;
+  margin-left: 40px;
+}
+
+.insert-btn {
+  background: none;
+  border: none;
+  color: #c80000;
+  cursor: pointer;
+  font-size: 1em;
+  vertical-align: bottom;
+  display: inline-block;
+  transition: transform 0.2s;
+}
+
+.insert-btn:hover {
+  color: #c80000;
+  transform: scale(1.3);
+}
+
+.inserted-text {
+  color: #c80000;
+}
+
+/* launcher buttons that open each panel */
+.win95-launcher {
+  margin-right: 10px;
+  margin-bottom: 20px;
+}
+
+/* ===== Win95 "Program Manager" window skin ===== */
+
+.win95-window {
+  --b: 2px;
+  --face: #c0c0c0;
+  --hi: #ffffff;
+  --lt: #dfdfdf;
+  --sh: #808080;
+  --dk: #000000;
+  --cap-a: #000080;
+  --cap-b: #1084d0;
+  --sans: system-ui, -apple-system, "Segoe UI", Tahoma, Verdana, Arial, sans-serif;
+
+  background: var(--face);
+  color: #101010;
+  font-family: var(--sans);
+  padding: 3px;
+  box-shadow:
+    inset var(--b) var(--b) 0 0 var(--hi),
+    inset calc(var(--b) * -1) calc(var(--b) * -1) 0 0 var(--dk),
+    inset calc(var(--b) * 2) calc(var(--b) * 2) 0 0 var(--lt),
+    inset calc(var(--b) * -2) calc(var(--b) * -2) 0 0 var(--sh);
+}
+
+/* Docking + open/close state (replaces the old overlay .modal) */
+.panel {
+  display: none;
+  position: fixed;
+  top: 6vh;
+  z-index: 5;
+  max-height: 85vh;
+}
+
+.panel.open {
+  display: flex;
+  flex-direction: column;
+}
+
+/* left window lives in the left half of the screen, right window in the right half —
+   each can size itself narrower than its half based on its own content */
+.panel-left {
+  left: 2vw;
+  width: fit-content;
+  max-width: calc(50vw - 3vw);
+}
+
+.panel-right {
+  right: 2vw;
+  width: fit-content;
+  max-width: calc(50vw - 3vw);
+}
+
+@media (max-width: 800px) {
+  .panel {
+    position: static;
+    width: 92%;
+    margin: 1rem auto;
+  }
+}
+
+.win95-cap {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 3px;
+  padding: 0.25rem 0.25rem 0.25rem 0.5rem;
+  background: linear-gradient(90deg, var(--cap-a), var(--cap-b));
+}
+
+.win95-cap-ic {
+  inline-size: 16px;
+  block-size: 16px;
+  flex: none;
+  background: #f4f4ee;
+  clip-path: polygon(0 0, 70% 0, 100% 26%, 100% 100%, 0 100%);
+}
+
+.win95-cap-t {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.win95-cap-b {
+  display: flex;
+  gap: 2px;
+  flex: none;
+}
+
+.win95-sys {
+  inline-size: 22px;
+  block-size: 20px;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  background: var(--face);
+  box-shadow:
+    inset var(--b) var(--b) 0 0 var(--hi),
+    inset calc(var(--b) * -1) calc(var(--b) * -1) 0 0 var(--dk),
+    inset calc(var(--b) * 2) calc(var(--b) * 2) 0 0 var(--lt),
+    inset calc(var(--b) * -2) calc(var(--b) * -2) 0 0 var(--sh);
+}
+
+.win95-sys:active {
+  box-shadow:
+    inset var(--b) var(--b) 0 0 var(--dk),
+    inset calc(var(--b) * -1) calc(var(--b) * -1) 0 0 var(--hi),
+    inset calc(var(--b) * 2) calc(var(--b) * 2) 0 0 var(--sh),
+    inset calc(var(--b) * -2) calc(var(--b) * -2) 0 0 var(--lt);
+}
+
+.win95-sg {
+  display: block;
+  background: #101010;
+}
+
+.win95-sg--min {
+  inline-size: 8px;
+  block-size: 2px;
+  margin-block-start: 7px;
+}
+
+.win95-sg--max {
+  inline-size: 9px;
+  block-size: 8px;
+  background: transparent;
+  border: 1.5px solid #101010;
+  border-block-start-width: 2.5px;
+}
+
+.win95-sg--cls {
+  inline-size: 10px;
+  block-size: 10px;
+  background: transparent;
+  background-image:
+    linear-gradient(45deg, transparent 44%, #101010 44% 56%, transparent 56%),
+    linear-gradient(-45deg, transparent 44%, #101010 44% 56%, transparent 56%);
+}
+
+.win95-mb {
+  margin: 0 3px;
+}
+
+.win95-mb ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.win95-mb button {
+  padding: 0.35rem 0.6rem;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 0.82rem;
+  color: #101010;
+  cursor: pointer;
+}
+
+.win95-mb button:hover {
+  background: var(--cap-a);
+  color: #ffffff;
+}
+
+.win95-client {
+  margin: 3px;
+  padding: 1rem 1.1rem;
+  background: #ffffff;
+  overflow-y: auto;
+  font-family: "consolas", monospace;
+  box-shadow:
+    inset var(--b) var(--b) 0 0 var(--sh),
+    inset calc(var(--b) * -1) calc(var(--b) * -1) 0 0 var(--hi),
+    inset calc(var(--b) * 2) calc(var(--b) * 2) 0 0 var(--dk),
+    inset calc(var(--b) * -2) calc(var(--b) * -2) 0 0 var(--lt);
+}
+
+.win95-status {
+  display: flex;
+  gap: 3px;
+  margin: 3px;
+}
+
+.win95-well {
+  flex: 1 1 8rem;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.78rem;
+  box-shadow:
+    inset 1px 1px 0 0 var(--sh),
+    inset -1px -1px 0 0 var(--hi);
+}
+
+/* override the old plain "close" span look when used as a Win95 sys button */
+.win95-window .close {
+  float: none;
+  font-size: inherit;
+  font-weight: normal;
+  color: inherit;
+}
+
+/* ===== Media Player widget ===== */
+
+:root {
+  --chrome-light: #f4f4f2;
+  --chrome-mid: #d6d6d2;
+  --chrome-dark: #a8a8a4;
+  --bevel-hi: #fff;
+  --bevel-lo: #6b6b68;
+  --screen-bg: #eceae4;
+}
+
+.player-stage * {
+  box-sizing: border-box;
+}
+
+/* stage wraps the player so its dark backdrop + centering don't touch <body> */
+.player-stage {
+  background: #2a2a2a;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+.player {
+  width: 500px;
+  background: linear-gradient(180deg, var(--chrome-light), var(--chrome-mid));
+  border-radius: 4px;
+  box-shadow:
+    0 0 0 1px #7a7a76,
+    0 0 0 3px var(--chrome-light),
+    0 0 0 4px #7a7a76,
+    0 18px 40px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.player .titlebar {
+  background: linear-gradient(180deg, #c8102e, #7c0a1d);
+  color: #fff;
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 1px;
+  padding: 8px 14px;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.4);
+}
+
+.player .body {
+  padding: 16px;
+}
+
+/* bevelled button look, matched to the Win95 window chrome bevel
+   (--face/--hi/--lt/--sh/--dk/--b cascade down from the parent .win95-window) */
+.player .btn {
+  background: var(--face, #c0c0c0);
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  font: inherit;
+  box-shadow:
+    inset var(--b, 2px) var(--b, 2px) 0 0 var(--hi, #fff),
+    inset calc(var(--b, 2px) * -1) calc(var(--b, 2px) * -1) 0 0 var(--dk, #000),
+    inset calc(var(--b, 2px) * 2) calc(var(--b, 2px) * 2) 0 0 var(--lt, #dfdfdf),
+    inset calc(var(--b, 2px) * -2) calc(var(--b, 2px) * -2) 0 0 var(--sh, #808080);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.player .btn.active,
+.player .btn:active {
+  box-shadow:
+    inset var(--b, 2px) var(--b, 2px) 0 0 var(--dk, #000),
+    inset calc(var(--b, 2px) * -1) calc(var(--b, 2px) * -1) 0 0 var(--hi, #fff),
+    inset calc(var(--b, 2px) * 2) calc(var(--b, 2px) * 2) 0 0 var(--sh, #808080),
+    inset calc(var(--b, 2px) * -2) calc(var(--b, 2px) * -2) 0 0 var(--lt, #dfdfdf);
+}
+.player .btn svg {
+  width: 16px;
+  height: 16px;
+}
+.player .btn.heart.liked svg path {
+  fill: #c8102e;
+}
+
+.player .art-frame {
+  width: 400px;
+  height: 400px;
+  flex-shrink: 0;
+  background: var(--chrome-mid);
+  padding: 6px;
+  border-radius: 3px;
+  box-shadow:
+    inset 2px 2px 3px var(--bevel-lo),
+    inset -1px -1px 0 var(--bevel-hi);
+  margin: 0 auto;
+}
+
+.player .art-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 2px;
+  box-shadow:
+    inset 0 0 0 1px #8c8c88,
+    inset 2px 2px 4px rgba(0, 0, 0, 0.35);
+}
+
+.player .transport {
+  margin-top: 14px;
+  display: flex;
+  gap: 5px;
+}
+.player .transport + .transport {
+  margin-top: 5px;
+}
+.player .transport .btn {
+  flex: 1;
+  height: 34px;
+}
+.player .transport .wide {
+  flex: 1.6;
+}
+
+.player .meta {
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  color: #444;
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+}
+.player .meta .label {
+  width: 42px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.player .meta .value {
+  flex: 1;
+  background: var(--screen-bg);
+  border-radius: 2px;
+  padding: 6px 8px;
+  box-shadow:
+    inset 1px 1px 2px rgba(0, 0, 0, 0.4),
+    inset -1px -1px 0 rgba(255, 255, 255, 0.6);
+  font-size: 18px;
+  color: #111;
+}
